@@ -18,13 +18,9 @@ function cleanup() {
 }
 trap cleanup EXIT
 if [ "$#" -lt 2 ]; then
-	for i in packages-main/*.pkgen; do
-		docker run --rm -v $(realpath packages-main):/build -v $TMPDIR:/out panux/package-builder /build/$(basename $i) /out || { echo "Failed to build package $i"; exit 1; }
-	done
+	make -C packages-main DEST=$TMPDIR all || { echo "Failed to build package(s)"; exit 1; }
 else
-	for i in "${@:2}"; do
-		docker run --rm -v $(realpath packages-main):/build -v $TMPDIR:/out panux/package-builder /build/$(basename $i) /out || { echo "Failed to build package $i"; exit 1; }
-	done
+	make -C packages-main DEST=$TMPDIR "${@:2}" || { echo "Failed to build package(s)"; exit 1; }
 fi
 ls $TMPDIR
 for i in $TMPDIR/*.tar.xz; do
