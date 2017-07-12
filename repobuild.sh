@@ -2,10 +2,11 @@ if [ "$#" -lt 2 ]; then
 	echo "script requires at least two arguments"
 	exit 1
 fi
-if [ ! -d packages-main ]; then
-	git clone https://github.com/panux/packages-main.git || { echo "Failed to git clone package repo"; exit 1; }
+if [ -d packages-main ]; then
+	rm -rf packages-main
 fi
-if [ ! -d repo/$1/pkgs ]; then
+git clone -b $1 https://github.com/panux/packages-main.git || { echo "Failed to git clone package repo"; exit 1; }
+if [ ! -d repo/$1/$2/pkgs ]; then
 	mkdir -p repo/$1/$2/pkgs || { echo "Failed to create repo directory"; exit 1; }
 fi
 git -C packages-main pull || { echo "Failed to pull package repo"; exit 1; }
